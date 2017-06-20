@@ -7,13 +7,13 @@ Code seen in Cryptocurrency Trading YouTube video here: https://youtu.be/fpqzXgZ
 requires : https://github.com/s4w3d0ff/python-poloniex
 
 Python 2.x:
-'''
+```
 pip install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.4.zip
-'''
+```
 Python 3.x:
-'''
+```
 pip3 install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.4.zip
-'''
+```
 ## Usage
 
 TODO: Write usage instructions
