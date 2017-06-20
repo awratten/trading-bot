@@ -1,27 +1,22 @@
 from botlog import BotLog
 
+ar_pro = []
+
 class BotTrade(object):
-	def __init__(self,currentPrice,stopLoss=0):
+	def __init__(self, currentPrice):
 		self.output = BotLog()
 		self.status = "OPEN"
 		self.entryPrice = currentPrice
-		self.exitPrice = ""
+		self.exitPrice = 0
 		self.output.log("Trade opened")
-		if (stopLoss):
-			self.stopLoss = currentPrice - stopLoss
-	
+
 	def close(self,currentPrice):
 		self.status = "CLOSED"
 		self.exitPrice = currentPrice
-		self.output.log("Trade closed")
-
-	def tick(self, currentPrice):
-		if (self.stopLoss):
-			if (currentPrice < self.stopLoss):
-				self.close(currentPrice)
-
+		self.output.log("Trade Closed")
 
 	def showTrade(self):
+		
 		tradeStatus = "Entry Price: "+str(self.entryPrice)+" Status: "+str(self.status)+" Exit Price: "+str(self.exitPrice)
 
 		if (self.status == "CLOSED"):
@@ -31,7 +26,12 @@ class BotTrade(object):
 			else:
 				tradeStatus = tradeStatus + "\033[91m"
 
-			tradeStatus = tradeStatus+str(self.exitPrice - self.entryPrice)+"\033[0m"
+		print (self.exitPrice)
+		
+		tradeStatus = tradeStatus+str(self.exitPrice - self.entryPrice) + "\033[0m"
+		
+		ar_pro.append(self.exitPrice - self.entryPrice)
+		totalProffit = sum(ar_pro)
 
 		self.output.log(tradeStatus)
-	
+		self.output.log("SubTotal: " + str(totalProffit))
