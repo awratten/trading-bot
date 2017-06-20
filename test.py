@@ -3,7 +3,7 @@ from poloniex import Poloniex
 
 class BotChart(object):
 	def __init__(self, exchange, pair, period):
-		self.conn = Poloniex("N9GVZF8Y-WGYIMIXP-UNKOUYKA-E914X4YB","8047b4808f013cceadf52f25253ca1b618216bf7d6bff84d79274eac10cf1985260d51fd9f1ffae333f752695c6b2985b7a9da6a4462e97a82879a0365a98dda")
+		self.conn = Poloniex("","")
 
 		self.pair = pair
 		self.period = period
