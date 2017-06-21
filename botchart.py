@@ -14,8 +14,8 @@ class BotChart(object):
 		self.endTime = time.time() #End at current time
 
 		
-		#self.data = self.conn.returnChartData(self.pair, self.period, self.startTime, self.endTime)
-		self.data = self.conn.returnTicker()[self.pair]
+		self.data = self.conn.returnChartData(self.pair, self.period, self.startTime, self.endTime)
+		#self.data = self.conn.returnTicker()[self.pair]
 
 
 	def getPoints(self):

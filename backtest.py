@@ -13,17 +13,9 @@ def main(argv):
 
 	strategy = BotStrategy()
 
-	#for candlestick in chart.getPoints():
+	for candlestick in chart.getPoints():
 		#print(candlestick)
-		#strategy.tick(candlestick)
-
-	while True:
-		currentValues = chart.getPoints()
-		#lastPairPrice = currentValues[pair]["last"]
-		dataDate = datetime.datetime.now()
-		print(currentValues['last'])
-		print(currentValues)
-		time.sleep(int(chart.period))
+		strategy.tick(candlestick)
 
 
 if __name__ == "__main__":
