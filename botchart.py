@@ -1,5 +1,5 @@
 from poloniex import Poloniex
-
+import time
 
 class BotChart(object):
 	def __init__(self, exchange, pair, period):
@@ -7,9 +7,11 @@ class BotChart(object):
 
 		self.pair = pair
 		self.period = period
+		
+		Days = 1			#TODO: Fix Naming of this variable
 
-		self.startTime = 1496275200 #1497916800 #1496275200
-		self.endTime = 1498000843  
+		self.startTime = time.time() - (86400 * Days)
+		self.endTime = time.time()  #End at current time
 
 		#self.data = self.conn.api_query("returnChartPair",{"currentPair":self.pair,"start":self.startTime,"end":self.endTime,"period":self.period})
 		self.data = self.conn.returnChartData(self.pair, self.period, self.startTime, self.endTime)
