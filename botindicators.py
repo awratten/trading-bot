@@ -3,7 +3,7 @@ class BotIndicators(object):
 		pass
 
 	def movingAverage(self, dataPoints, period):
-		if (len(dataPoints) > period):
+		if (len(dataPoints) > 0):
 			return sum(dataPoints[-period:]) / float(len(dataPoints[-period:]))
 
 	def trend (self, dataPoints, period):
