@@ -30,7 +30,7 @@ class BotStrategy(object):
 
 		if (len(openTrades) < self.numSimulTrades):
 			#if (self.currentPrice < self.indicators.movingAverage(self.prices,15)):
-			if (self.indicators.trend(self.prices,15) == 1):
+			if (self.indicators.trend(self.prices,10) == 1):
 				self.trades.append(BotTrade(self.currentPrice,stopLoss=0.0001))
 
 		for trade in openTrades:

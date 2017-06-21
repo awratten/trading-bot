@@ -6,7 +6,7 @@ from botstrategy import BotStrategy
 #[300, 900, 1800, 7200, 14400, 86400]:
 
 def main(argv):
-	chart = BotChart("poloniex", "BTC_DASH", 300)
+	chart = BotChart("poloniex", "BTC_ETH", 1800)
 
 	strategy = BotStrategy()
 
