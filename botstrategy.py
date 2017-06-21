@@ -17,6 +17,8 @@ class BotStrategy(object):
 		self.stopLoss = 0.00001
 		self.indicators = BotIndicators()
 
+		self.trendPeriod = 3 # ETH : 3 # DASH : 3
+		self.minVolume = 1.2 # ETH : 1.2 # DASH : 1
 
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick['weightedAverage'])
