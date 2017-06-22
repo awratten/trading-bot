@@ -15,3 +15,7 @@ class BotIndicators(object):
 				return 1
 			else:
 				return 0
+
+	def momentum (self, dataPoints, period=14):
+		if (len(dataPoints) > period -1):
+			return dataPoints[-1] * 100 / dataPoints[-period]
