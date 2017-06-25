@@ -22,7 +22,6 @@ class BotTrade(object):
 			if (currentPrice < self.stopLoss):
 				self.close(currentPrice)
 
-
 	def showTrade(self):
 		tradeStatus = "Entry Price: "+str(self.entryPrice)+" Status: "+str(self.status)+" Exit Price: "+str(self.exitPrice)
 

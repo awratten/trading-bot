@@ -1,16 +1,14 @@
 from botlog import BotLog
 from botindicators import BotIndicators
 from bottrade import BotTrade
-#from botpublic import BotPublic 
 
-from poloniex import Poloniex
-polo = Poloniex()
-ticker = polo.returnTicker()
+
 
 class BotStrategy(object):
 	def __init__(self):
 		self.output = BotLog()
 		self.prices = []
+		self.opens = []
 		self.closes = [] #for Momentum
 		self.trades = []
 		self.currentPrice = None
@@ -21,6 +19,7 @@ class BotStrategy(object):
 		self.trendPeriod = 3 # ETH : 3 # DASH : 3
 		self.minVolume = 1.2 # ETH : 1.2 # DASH : 1
 
+
 	def tick(self,candlestick):
 		self.currentPrice = float(candlestick['weightedAverage'])
 		self.currentVolume = float(candlestick['volume'])
@@ -29,6 +28,7 @@ class BotStrategy(object):
 		self.close = float(candlestick['close'])
 		self.high = float(candlestick['high'])
 		self.low = float(candlestick['low'])
+		self.date = float(candlestick['date'])
 
 		self.prices.append(self.currentPrice)
 		self.closes.append(self.close) # for Momentum
@@ -49,7 +49,9 @@ class BotStrategy(object):
 		if (len(openTrades) < self.numSimulTrades):
 			#if (self.currentPrice < self.indicators.movingAverage(self.prices,15)):
 			#if (float(ticker['BTC_ZEC']['percentChange']) < 0):
-			print("Momentum: " + str(self.indicators.momentum(self.closes)))
+			#print("Momentum: " + str(self.indicators.momentum(self.closes)))
+
+			print("Pivot: " + str(self.indicators.Pivot('BTC_ZEC', 300,self.date))) # dont need to calculate this every tick
 
 			if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
 					self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
