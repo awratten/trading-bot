@@ -33,7 +33,7 @@ class BotStrategy(object):
 		self.prices.append(self.currentPrice)
 		self.closes.append(self.close) # for Momentum
 		
-		self.output.log("Price: "+str(candlestick['weightedAverage'])+"\tMoving Average: "+str(self.indicators.movingAverage(self.prices,15))+"\tMomentum: "+str(self.indicators.momentum(self.closes)))
+		self.output.log("Price: "+str(candlestick['weightedAverage'])+"\tMoving Average: "+str(self.indicators.movingAverage(self.prices,15))+"\tMomentum: "+str(self.indicators.momentum(self.closes))+"\tRSI: "+str(self.indicators.RSI(self.prices)))
 		
 		self.evaluatePositions()
 		self.updateOpenTrades()
@@ -51,14 +51,18 @@ class BotStrategy(object):
 			#if (float(ticker['BTC_ZEC']['percentChange']) < 0):
 			#print("Momentum: " + str(self.indicators.momentum(self.closes)))
 
-			print("Pivot: " + str(self.indicators.Pivot('BTC_ZEC', 300,self.date))) # dont need to calculate this every tick
+			#print("Pivot: " + str(self.indicators.Pivot('BTC_ZEC', 300,self.date))) # dont need to calculate this every tick
+			#print("RSI : " + str(self.indicators.RSI(self.prices)))
 
 			if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
+
+			#if (self.indicators.RSI(self.prices,14) < 30 and self.currentVolume > self.minVolume):
 					self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
 
 		for trade in openTrades:
 			#if (self.currentPrice > self.indicators.movingAverage(self.prices,15)):
 			if (self.indicators.trend(self.prices,self.trendPeriod) == 0 and self.currentVolume > self.minVolume):
+			#if (self.indicators.RSI(self.prices,14) > 70 and self.currentVolume > self.minVolume):
 					trade.close(self.currentPrice)
 
 	def updateOpenTrades(self):

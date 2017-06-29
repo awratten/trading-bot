@@ -3,6 +3,7 @@ import datetime, time
 
 from botchart import BotChart
 from botstrategy import BotStrategy
+from bottrade import BotTrade
 
 #[300, 900, 1800, 7200, 14400, 86400]:
 
@@ -16,6 +17,9 @@ def main(argv):
 	for candlestick in chart.getPoints():
 		#print(candlestick)
 		strategy.tick(candlestick)
+
+	BotTrade.export()
+
 
 
 if __name__ == "__main__":
