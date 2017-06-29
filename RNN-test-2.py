@@ -25,6 +25,17 @@ conn = Poloniex()
 
 pair = 'BTC_ZEC'
 window_length = 10 # Amount of prior bars to study
+numSimulTrades = 1
+period = 300
+
+Days = 0.5
+
+startTime = 1498521600# - (86400) #time.time() - (86400 * Days)
+endTime = 1498608000 #time.time() #End at current time
+
+data = conn.returnChartData(pair, period, startTime, endTime)
+
+All_trades = []
 
 classifier = RandomForestClassifier() # Use a random forest classifier
 
@@ -32,20 +43,6 @@ classifier = RandomForestClassifier() # Use a random forest classifier
 recent_prices = deque(maxlen=window_length+2) # Stores recent prices
 X = deque(maxlen=500) # Independent, or input variables
 Y = deque(maxlen=500) # Dependent, or output variable
-
-
-numSimulTrades = 1
-
-period = 300
-Days = 0.5
-
-startTime = 1498521600 - (86400 * 3) #time.time() - (86400 * Days)
-endTime = 1498608000 #time.time() #End at current time
-
-data = conn.returnChartData(pair, period, startTime, endTime)
-
-All_trades = []
-
 
 class BotTrade(object):
 	def __init__(self,currentPrice):
@@ -161,5 +158,11 @@ Max Sim Trades : 1
 Proffit : -0.004648650000000448
 Total Trades : 746
 
-
+BTC_ZEC
+Period : 300
+Backtest Time : 48.0 hrs
+Window Length : 10
+Max Sim Trades : 1
+Proffit : 0.0035349999999997883
+Total Trades : 108
 """
