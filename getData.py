@@ -1,14 +1,15 @@
 from poloniex import Poloniex
 import time, datetime
 
-csvfile = open("btc_zec.csv", "a")
+csvfile = open("btc_zec_10_days_5min.csv", "a")
 
 
 conn = Poloniex()
 
 security = 'BTC_ZEC'
 period = 300
-Days = 230
+#Days = 230
+Days = 10
 
 startTime = time.time() - (86400 * Days)
 endTime = time.time() #End at current time
