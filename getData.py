@@ -3,7 +3,7 @@ def datetime_from_timestamp(timestamp):
 	return x
 
 
-def WriteData2csv(filename, pair='BTC_ZEC', period=300, days=230):
+def writeData2csv(filename, pair='BTC_ZEC', period=300, days=230):
 	from poloniex import Poloniex
 	import time, datetime
 
@@ -11,6 +11,7 @@ def WriteData2csv(filename, pair='BTC_ZEC', period=300, days=230):
 	conn = Poloniex()
 
 	startTime = time.time() - (86400 * days)
+	#startTime = time.time() - (period * 50)
 	endTime = time.time() #End at current time
 
 	data = conn.returnChartData(pair, period, startTime, endTime)
@@ -18,6 +19,8 @@ def WriteData2csv(filename, pair='BTC_ZEC', period=300, days=230):
 
 	for tick in data:
 		#print(str(datetime_from_timestamp(tick['date'])) + "," + tick['close'], file=csvfile)
-		print(tick['close'], file=filename)
+		print(tick['close'], file=csvfile)
+	return
 
 
+writeData2csv('test.csv')
