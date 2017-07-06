@@ -9,7 +9,7 @@ from bottrade import BotTrade
 
 def main(argv):
 	#chart = BotChart("poloniex", "BTC_ETH", 300)
-	chart = BotChart("poloniex", "BTC_ZEC", 300)
+	chart = BotChart("poloniex", "BTC_ETH", 900)
 	#chart = BotChart("poloniex", "BTC_DASH", 300)
 
 	strategy = BotStrategy()

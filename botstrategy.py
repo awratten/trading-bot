@@ -19,8 +19,8 @@ class BotStrategy(object):
 
 		self.currentPrice = None
 		self.numSimulTrades = 1
-		self.takeProffit = 0.01
-		self.stopLoss = 0.001
+		self.takeProfit = 0.005
+		self.stopLoss = 0.000001
 		self.indicators = BotIndicators()
 
 		self.trendPeriod = 3 # ETH : 3 # DASH : 3
@@ -94,9 +94,10 @@ class BotStrategy(object):
 
 
 			if (len(self.closes) > 100):
-				if (MacdCurrent < 0 and MacdCurrent > SignalCurrent and MacdPrevious < SignalPrevious):	
-					print("TRADE #################################################################")
-					self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
+				if (MacdCurrent and MacdPrevious and SignalCurrent and SignalPrevious):
+					if (MacdCurrent < 0 and MacdCurrent > SignalCurrent and MacdPrevious < SignalPrevious):	 #and self.indicators.RSI(self.prices,14) < 50
+						print("TRADE #################################################################")
+						self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
 
 
 			#if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
@@ -109,14 +110,16 @@ class BotStrategy(object):
 		for trade in openTrades:
 			currentProfit = float(self.currentPrice) - float(trade.entryPrice)
 			if currentProfit > 0:
+				print("entry: " + str(trade.entryPrice))
 				print(bcolors.OKGREEN + str(currentProfit) + bcolors.ENDC)
 			else:
+				print("entry: " + str(trade.entryPrice))
 				print(bcolors.WARNING + str(currentProfit) + bcolors.ENDC)
 
 			#if (MacdCurrent and MacdPrevious and SignalCurrent and SignalPrevious):
 			#	if (MacdCurrent > 0 and MacdCurrent < SignalCurrent and MacdPrevious > SignalPrevious):
-			if (currentProfit > self.takeProfit or currentProfit < self.stopLoss):
-				trade.close(self.currentPrice)
+			if (self.currentPrice > (float(trade.entryPrice) + self.takeProfit) ):
+					trade.close(self.currentPrice)
 			#if (self.currentPrice > self.indicators.movingAverage(self.prices,15)):
 			#if (self.indicators.trend(self.prices,self.trendPeriod) == 0 and self.currentVolume > self.minVolume):
 			#if (self.indicators.RSI(self.prices,14) > 70 and self.currentVolume > self.minVolume):
@@ -133,6 +136,8 @@ class BotStrategy(object):
 
 
 
+#3.9229976200001926
+#3.9229976200001926
 
 """
 
