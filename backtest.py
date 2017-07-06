@@ -5,11 +5,21 @@ from botchart import BotChart
 from botstrategy import BotStrategy
 from bottrade import BotTrade
 
+
+from pandas import read_csv
+from pandas import datetime
+from matplotlib import pyplot
+
+def parser(x):
+	y = datetime.fromtimestamp(float(x))
+	return (y.strftime('%d %H:%M:%S')) #datetime.fromtimestamp(float(x))#strptime(x, '%Y-%m-%d %H:%M:%S')
+
+
 #[300, 900, 1800, 7200, 14400, 86400]:
 
 def main(argv):
 	#chart = BotChart("poloniex", "BTC_ETH", 300)
-	chart = BotChart("poloniex", "BTC_ETH", 900)
+	chart = BotChart("poloniex", "BTC_XMR", 300)
 	#chart = BotChart("poloniex", "BTC_DASH", 300)
 
 	strategy = BotStrategy()
@@ -19,6 +29,10 @@ def main(argv):
 		strategy.tick(candlestick)
 
 	BotTrade.export()
+	
+	series = read_csv('export.csv', parse_dates=[0], index_col=0, squeeze=True, date_parser=parser)
+	series.plot()
+	pyplot.show()
 
 
 

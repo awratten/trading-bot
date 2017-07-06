@@ -1,14 +1,18 @@
 from botlog import BotLog
 from bcolors import bcolors
+import time
+from datetime import datetime
 
 ar_pro = []
 total = []
+trade_end_time = []
 
 
 class BotTrade(object):
 	def __init__(self,currentPrice,stopLoss=0):
 		self.output = BotLog()
 		self.status = "OPEN"
+		self.currentPrice = currentPrice
 		self.entryPrice = currentPrice
 		self.exitPrice = 0
 		self.output.log("Trade opened")
@@ -19,6 +23,9 @@ class BotTrade(object):
 		self.status = "CLOSED"
 		self.exitPrice = currentPrice
 		self.output.log("Trade closed")
+		#trade_end_time.append(datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')) #
+		#total.append(sum(ar_pro))
+
 
 	def tick(self, currentPrice):
 		if (self.stopLoss):
@@ -41,16 +48,23 @@ class BotTrade(object):
 
 		self.output.log(tradeStatus)
 		self.output.log("SubTotal: " + str((sum(ar_pro))))
+		trade_end_time.append(time.time())#(datetime.fromtimestamp(int(time.time())).strftime('%Y-%m-%d %H:%M:%S')) #
 		total.append(sum(ar_pro))
+
 	
 	def export():
+
 		filename = open("export.csv",'w')
-		for i in total:
-			print('{:.20f}'.format(i) + ',',file=filename)
+		#for i in total:
+		#	print('{:.20f}'.format(i[0]) + ',' + str(i[1]) ,file=filename)
 
-		#print (ex)
+		for i in range(len(trade_end_time)):
+		    filename.write("{},{}\n".format(trade_end_time[i],total[i]))
 
-		#print(ex, file=filename)
+		#filename.close()
+
+
+
 			
 
 

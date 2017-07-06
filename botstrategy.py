@@ -19,8 +19,8 @@ class BotStrategy(object):
 
 		self.currentPrice = None
 		self.numSimulTrades = 1
-		self.takeProfit = 0.005
-		self.stopLoss = 0.000001
+		self.takeProfit = 0.0001
+		self.stopLoss = 1
 		self.indicators = BotIndicators()
 
 		self.trendPeriod = 3 # ETH : 3 # DASH : 3
@@ -40,7 +40,7 @@ class BotStrategy(object):
 		self.prices.append(self.currentPrice)
 		self.closes.append(self.close) # for Momentum
 		
-		self.output.log("Price: "+str(candlestick['weightedAverage'])+"\tMoving Average: "+str(self.indicators.movingAverage(self.prices,15))+"\tMomentum: "+str(self.indicators.momentum(self.closes))+"\tRSI: "+str(self.indicators.RSI(self.prices)))
+		self.output.log("Price: " + str(candlestick['weightedAverage'])+"\tMoving Average: "+str(self.indicators.movingAverage(self.prices,15))+"\tMomentum: "+str(self.indicators.momentum(self.closes))+"\tRSI: "+str(self.indicators.RSI(self.prices)))
 		
 		self.evaluatePositions()
 		self.updateOpenTrades()
@@ -73,30 +73,34 @@ class BotStrategy(object):
 			#print(signal)
 
 
-			print("MACD: ")
-			if (len(self.closes) > 26 + 2):
+			
+			if (len(self.closes) > 26 + 2): # Need to have enought prices in order to calculate the slowEMA
 				SlowEMA = (self.indicators.EMA(self.closes, 26))
 				FastEMA = (self.indicators.EMA(self.closes, 12))
+
 				self.MACD_History.append(self.indicators.iMACD(SlowEMA,FastEMA))
-				MacdCurrent = self.MACD_History[-1]
+				
+				MacdCurrent = self.MACD_History[-1] # this is the most recent MACD in the list
+				
 				if (len(self.MACD_History) > 2):
-					MacdPrevious = (self.MACD_History[-2])
+					MacdPrevious = (self.MACD_History[-2]) # This is the second most recent MACD in the List
+				
 				if (len(self.MACD_History) > 9 + 2):
-					SignalCurrent = self.indicators.EMA(self.MACD_History,9)
+					SignalCurrent = self.indicators.EMA(self.MACD_History,9) 
 					self.MACD_Signal_History.append(SignalCurrent)
+				
 					if (len(self.MACD_Signal_History) > 2):
 						SignalPrevious = self.MACD_Signal_History[-2]
-
-						print(MacdCurrent)
-						print(MacdPrevious)
-						print(SignalCurrent)
-						print(SignalPrevious)
+						#print("MACD: ")
+						#print(MacdCurrent)
+						#print(MacdPrevious)
+						#print(SignalCurrent)
+						#print(SignalPrevious)
 
 
 			if (len(self.closes) > 100):
 				if (MacdCurrent and MacdPrevious and SignalCurrent and SignalPrevious):
-					if (MacdCurrent < 0 and MacdCurrent > SignalCurrent and MacdPrevious < SignalPrevious):	 #and self.indicators.RSI(self.prices,14) < 50
-						print("TRADE #################################################################")
+					if (MacdCurrent < 0 and MacdCurrent > SignalCurrent and MacdPrevious < SignalPrevious and self.indicators.RSI(self.prices,14) < 50):	 
 						self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
 
 
@@ -108,6 +112,7 @@ class BotStrategy(object):
 		#print bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.ENDC
 		
 		for trade in openTrades:
+
 			currentProfit = float(self.currentPrice) - float(trade.entryPrice)
 			if currentProfit > 0:
 				print("entry: " + str(trade.entryPrice))
@@ -118,8 +123,12 @@ class BotStrategy(object):
 
 			#if (MacdCurrent and MacdPrevious and SignalCurrent and SignalPrevious):
 			#	if (MacdCurrent > 0 and MacdCurrent < SignalCurrent and MacdPrevious > SignalPrevious):
-			if (self.currentPrice > (float(trade.entryPrice) + self.takeProfit) ):
+			
+			if (self.currentPrice >= (float(trade.entryPrice) + self.takeProfit) or self.date > 1499309550 - 300):
 					trade.close(self.currentPrice)
+
+
+
 			#if (self.currentPrice > self.indicators.movingAverage(self.prices,15)):
 			#if (self.indicators.trend(self.prices,self.trendPeriod) == 0 and self.currentVolume > self.minVolume):
 			#if (self.indicators.RSI(self.prices,14) > 70 and self.currentVolume > self.minVolume):
