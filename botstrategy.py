@@ -54,6 +54,15 @@ class BotStrategy(object):
 			#print("Pivot: " + str(self.indicators.Pivot('BTC_ZEC', 300,self.date))) # dont need to calculate this every tick
 			#print("RSI : " + str(self.indicators.RSI(self.prices)))
 
+			#slow, fast, signal = self.indicators.MACD(self.closes)
+			#print(slow)
+			#print(fast)
+			#print(signal)
+			print("EMA: ")
+			print(self.indicators.EMA(self.prices, 14))
+			print("MACD: ")
+			print(self.indicators.MACD(self.prices))
+
 			if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
 
 			#if (self.indicators.RSI(self.prices,14) < 30 and self.currentVolume > self.minVolume):

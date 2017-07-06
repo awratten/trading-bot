@@ -67,8 +67,6 @@ class BotIndicators(object):
 			return PP
 
 
-		
-
 	def RSI(self, prices, period=14):
 		deltas = np.diff(prices)
 		seed = deltas[:period+1]
@@ -100,26 +98,22 @@ class BotIndicators(object):
 			return 50 # output a neutral amount until enough prices in list
 
 
-
-	def moving_average(self, dataPoints, period, type='simple'):
-		dataPoints = np.asarray(dataPoints)
-		if type == 'simple':
-			weights = np.ones(period)
+	def EMA(self, dataPoints, period, position=None, previous_ema=None):
+		"""https://www.oanda.com/forex-trading/learn/forex-indicators/exponential-moving-average"""
+		if (len(dataPoints) < period + 2):
+			return None
+		c = 2 / float(period + 1)
+		if not previous_ema:
+			return self.EMA(dataPoints, period, period, self.movingAverage(dataPoints[-period*2 + 1:-period + 1], period))
 		else:
-			weights = np.exp(np.linspace(-1., 0., period))
+			current_ema = (c * dataPoints[-position]) + ((1 - c) * previous_ema)
+			if position > 0:
+				return self.EMA(dataPoints, period, position - 1, current_ema)
+		return previous_ema
 
-		weights /= weights.sum()
-
-		a = np.convolve(dataPoints, weights, mode='full')[:len(dataPoints)]
-		a[:period] = a[period]
-
-		return a
 
 	def MACD(self, dataPoints, nslow=26, nfast=12):
-		"""
-		compute the MACD (Moving Average Convergence/Divergence) using a fast and slow exponential moving avg'
-		return value is emaslow, emafast, macd which are len(dataPoints) arrays
-		"""
-		emaslow = moving_average(dataPoints, nslow, type='exponential')
-		emafast = moving_average(dataPoints, nfast, type='exponential')
-		return emaslow, emafast, emafast - emaslow
+		if (len(dataPoints) > nslow + 1):
+			emaslow = self.EMA(dataPoints, nslow)
+			emafast = self.EMA(dataPoints, nfast)
+			return emaslow, emafast, emafast - emaslow
