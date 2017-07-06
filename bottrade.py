@@ -1,7 +1,9 @@
 from botlog import BotLog
+from bcolors import bcolors
 
 ar_pro = []
 total = []
+
 
 class BotTrade(object):
 	def __init__(self,currentPrice,stopLoss=0):

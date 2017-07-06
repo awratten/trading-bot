@@ -2,6 +2,8 @@ from botlog import BotLog
 from botindicators import BotIndicators
 from bottrade import BotTrade
 
+from bcolors import bcolors
+
 
 
 class BotStrategy(object):
@@ -11,9 +13,14 @@ class BotStrategy(object):
 		self.opens = []
 		self.closes = [] #for Momentum
 		self.trades = []
+		
+		self.MACD_History = [] # MACD History
+		self.MACD_Signal_History = [] # MACD Signal History
+
 		self.currentPrice = None
 		self.numSimulTrades = 1
-		self.stopLoss = 0.00001
+		self.takeProffit = 0.01
+		self.stopLoss = 0.001
 		self.indicators = BotIndicators()
 
 		self.trendPeriod = 3 # ETH : 3 # DASH : 3
@@ -41,6 +48,12 @@ class BotStrategy(object):
 
 
 	def evaluatePositions(self):
+		MacdCurrent = None
+		MacdPrevious = None
+		SignalCurrent = None
+		SignalPrevious = None
+
+
 		openTrades = []
 		for trade in self.trades:
 			if (trade.status == "OPEN"):
@@ -58,21 +71,56 @@ class BotStrategy(object):
 			#print(slow)
 			#print(fast)
 			#print(signal)
-			print("EMA: ")
-			print(self.indicators.EMA(self.prices, 14))
+
+
 			print("MACD: ")
-			print(self.indicators.MACD(self.prices))
+			if (len(self.closes) > 26 + 2):
+				SlowEMA = (self.indicators.EMA(self.closes, 26))
+				FastEMA = (self.indicators.EMA(self.closes, 12))
+				self.MACD_History.append(self.indicators.iMACD(SlowEMA,FastEMA))
+				MacdCurrent = self.MACD_History[-1]
+				if (len(self.MACD_History) > 2):
+					MacdPrevious = (self.MACD_History[-2])
+				if (len(self.MACD_History) > 9 + 2):
+					SignalCurrent = self.indicators.EMA(self.MACD_History,9)
+					self.MACD_Signal_History.append(SignalCurrent)
+					if (len(self.MACD_Signal_History) > 2):
+						SignalPrevious = self.MACD_Signal_History[-2]
 
-			if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
+						print(MacdCurrent)
+						print(MacdPrevious)
+						print(SignalCurrent)
+						print(SignalPrevious)
 
-			#if (self.indicators.RSI(self.prices,14) < 30 and self.currentVolume > self.minVolume):
+
+			if (len(self.closes) > 100):
+				if (MacdCurrent < 0 and MacdCurrent > SignalCurrent and MacdPrevious < SignalPrevious):	
+					print("TRADE #################################################################")
 					self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
 
+
+			#if (self.indicators.trend(self.prices,self.trendPeriod) == 1 and self.currentVolume > self.minVolume):
+				#self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
+			#if (self.indicators.RSI(self.prices,14) < 30 and self.currentVolume > self.minVolume):
+			#		self.trades.append(BotTrade(self.currentPrice,stopLoss=self.stopLoss))
+
+		#print bcolors.WARNING + "Warning: No active frommets remain. Continue?" + bcolors.ENDC
+		
 		for trade in openTrades:
+			currentProfit = float(self.currentPrice) - float(trade.entryPrice)
+			if currentProfit > 0:
+				print(bcolors.OKGREEN + str(currentProfit) + bcolors.ENDC)
+			else:
+				print(bcolors.WARNING + str(currentProfit) + bcolors.ENDC)
+
+			#if (MacdCurrent and MacdPrevious and SignalCurrent and SignalPrevious):
+			#	if (MacdCurrent > 0 and MacdCurrent < SignalCurrent and MacdPrevious > SignalPrevious):
+			if (currentProfit > self.takeProfit or currentProfit < self.stopLoss):
+				trade.close(self.currentPrice)
 			#if (self.currentPrice > self.indicators.movingAverage(self.prices,15)):
-			if (self.indicators.trend(self.prices,self.trendPeriod) == 0 and self.currentVolume > self.minVolume):
+			#if (self.indicators.trend(self.prices,self.trendPeriod) == 0 and self.currentVolume > self.minVolume):
 			#if (self.indicators.RSI(self.prices,14) > 70 and self.currentVolume > self.minVolume):
-					trade.close(self.currentPrice)
+			#		trade.close(self.currentPrice)
 
 	def updateOpenTrades(self):
 		for trade in self.trades:
@@ -83,3 +131,40 @@ class BotStrategy(object):
 		for trade in self.trades:
 			trade.showTrade()
 
+
+
+
+"""
+
+   MacdCurrent=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_MAIN,0);
+   MacdPrevious=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_MAIN,1);
+   SignalCurrent=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,0);
+   SignalPrevious=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,1);
+   MaCurrent=iMA(NULL,0,MATrendPeriod,0,MODE_EMA,PRICE_CLOSE,0);
+   MaPrevious=iMA(NULL,0,MATrendPeriod,0,MODE_EMA,PRICE_CLOSE,1);
+
+if (MacdCurrent<0 && MacdCurrent>SignalCurrent && MacdPrevious<SignalPrevious)
+       if (MathAbs(MacdCurrent)>(MACDOpenLevel*sdPoint) && MaCurrent>MaPrevious)
+        if (TradingHours() == true)
+         {
+          if (ECN.Broker == false) ticket=OrderSend(Symbol(),OP_BUY,Lots,Ask,RealSlippage,Ask-StopLossLong*sdPoint,Ask+TakeProfitLong*sdPoint,YourOrderComment,MagicNumber,0,Green);
+          else
+            {
+              ticket=OrderSend(Symbol(),OP_BUY,Lots,Ask,RealSlippage,0,0,YourOrderComment,MagicNumber,0,Green); // Send order without stops
+           
+              if (ticket > -1) AddLiteralStopsByPips(ticket, OP_BUY, StopLossLong, TakeProfitLong); 
+           
+            }        
+ 
+          return(0); 
+         }
+
+
+#// should it be closed?
+                     if (MacdCurrent>0 && MacdCurrent<SignalCurrent && MacdPrevious>SignalPrevious)
+                       if (MacdCurrent>(MACDCloseLevel*sdPoint))
+                         {
+                          OrderClose(OrderTicket(),OrderLots(),Bid,RealSlippage,Violet); // close position
+                          return(0); // exit
+
+"""

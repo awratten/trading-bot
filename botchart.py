@@ -8,7 +8,6 @@ class BotChart(object):
 		self.pair = pair
 		self.period = period
 		
-		Days = 1			#TODO: Fix Naming of this variable
 
 		self.startTime = time.time() - (86400 * Days)
 		self.endTime = time.time() #End at current time
